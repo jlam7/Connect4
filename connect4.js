@@ -8,7 +8,7 @@
 let WIDTH = 7;
 let HEIGHT = 6;
 
-let currPlayer = 1; // active player: 1 or 2
+let currPlayer = '1'; // active player: 1 or 2
 let board = []; // array of rows, each row is array of cells  (board[y][x])
 
 /** makeBoard: create in-JS board structure:
@@ -77,15 +77,15 @@ function placeInTable(y, x) {
 
 	const onePiece = document.createElement('div');
 	onePiece.classList.add('piece');
-	if (currPlayer === 1) {
-		onePiece.classList.add('player1');
+	if (currPlayer === '1') {
+		onePiece.classList.add('p1'); //player1 will be red
 	} else {
-		onePiece.classList.add('player2');
+		onePiece.classList.add('p2'); //player2 will be blue
 	}
 
-	const foundTD = allTds.filter((td) => td.getAttribute('id').includes(location));
-	if (foundTD[0].childElementCount === 0) {
-		foundTD[0].append(onePiece);
+	const foundTD = allTds.filter((td) => td.getAttribute('id').includes(location))[0]; //to access content inside
+	if (foundTD.childElementCount === 0) {
+		foundTD.append(onePiece);
 	}
 }
 
@@ -104,16 +104,15 @@ function handleClick(evt) {
 
 	// get next spot in column (if none, ignore click)
 	const y = findSpotForCol(x);
-	// if (y === null) {
-	// 	return;
-	// }
+	if (y === null) {
+		return;
+	}
 
 	// place piece in board and add to HTML table
 	// TODO: add line to update in-memory board
 	placeInTable(y, x);
-	//                                     1               2                        3
-	board[y][x][0] = 'occupied'; //[access the row][access the cell][access the content inside of cell]
-	console.log(board);
+	board[y][x] = `${currPlayer}`;
+
 	// check for win
 	if (checkForWin()) {
 		return endGame(`Player ${currPlayer} won!`);
@@ -121,11 +120,13 @@ function handleClick(evt) {
 
 	// check for tie
 	// TODO: check if all cells in board are filled; if so call, call endGame
-	// if (board.every((cell) => cell.includes('occupied'))) return endGame('It is a tie!');
+	if (board.every((row) => row.every((cell) => cell.includes('1') || cell.includes('2')))) {
+		return endGame('It is a tie!');
+	}
 
 	// switch players
 	// TODO: switch currPlayer 1 <-> 2
-	currPlayer = currPlayer === 1 ? 2 : 1;
+	currPlayer = currPlayer === '1' ? '2' : '1';
 }
 
 /** checkForWin: check board cell-by-cell for "does a win start here?" */
