@@ -67,15 +67,19 @@ function findSpotForCol(x) {
 	}
 	return null;
 }
+
 /** placeInTable: update DOM to place piece into HTML table of board */
 
+let keyframeObj = {};
 function placeInTable(y, x) {
 	// TODO: make a div and insert into correct table cell
 	const allTds = [ ...document.querySelectorAll('#column-top ~tr td') ];
 	const location = `${y}-${x}`;
+	let keyFrameNum = keyframeObj[x];
 
 	const onePiece = document.createElement('div');
-	onePiece.classList.add('piece');
+	onePiece.classList.add('piece', `slide${keyFrameNum}`); //use keyFrameNum to determine start position of where to drop in piece
+
 	if (currPlayer === 1) {
 		onePiece.classList.add('p1'); //player1 will be red
 	} else {
@@ -100,6 +104,13 @@ function endGame(msg) {
 function handleClick(evt) {
 	// get x from ID of clicked cell
 	const x = +evt.target.id;
+
+	// keep track of number of times click event occurs at position 'x'
+	if (keyframeObj[x]) {
+		keyframeObj[x]++;
+	} else {
+		keyframeObj[x] = 1;
+	}
 
 	// get next spot in column (if none, ignore click)
 	const y = findSpotForCol(x);
