@@ -85,7 +85,6 @@ function placeInTable(y, x) {
 	} else {
 		onePiece.classList.add('p2'); //player2 will be blue
 	}
-
 	const foundTD = allTds.find((td) => td.getAttribute('id').includes(location));
 
 	if (foundTD !== undefined && foundTD.childElementCount === 0) {
@@ -124,20 +123,25 @@ function handleClick(evt) {
 	placeInTable(y, x);
 	board[y][x] = Number(`${currPlayer}`);
 
-	// check for win
+	// check for a win or a tie
+	const allTds = [ ...document.querySelectorAll('#column-top ~tr td') ];
+	const foundTD = allTds.find((td) => td.getAttribute('id').includes(`${y}-${x}`));
 	if (checkForWin()) {
-		return endGame(`Player ${currPlayer} won!`);
-	}
+		const top = document.querySelector('#column-top');
+		top.removeEventListener('click', handleClick, false);
 
-	// check for tie
-	// TODO: check if all cells in board are filled; if so call, call endGame
-	if (board.every((row) => row.every((cell) => cell === 1 || cell === 2))) {
-		return endGame('It is a tie!');
+		foundTD.firstChild.addEventListener('animationend', function() {
+			return endGame(`Player ${currPlayer} won!`);
+		});
+	} else if (board.every((row) => row.every((cell) => cell === 1 || cell === 2))) {
+		foundTD.firstChild.addEventListener('animationend', function() {
+			return endGame(`It is a tie!`);
+		});
+	} else {
+		// switch players
+		// TODO: switch currPlayer 1 <-> 2
+		currPlayer = currPlayer === 1 ? 2 : 1;
 	}
-
-	// switch players
-	// TODO: switch currPlayer 1 <-> 2
-	currPlayer = currPlayer === 1 ? 2 : 1;
 }
 
 /** checkForWin: check board cell-by-cell for "does a win start here?" */
