@@ -5,8 +5,8 @@
  * board fills (tie)
  */
 
-let WIDTH = 7;
-let HEIGHT = 6;
+const WIDTH = 7;
+const HEIGHT = 6;
 
 let currPlayer = 1; // active player: 1 or 2
 let board = []; // array of rows, each row is array of cells  (board[y][x])
@@ -86,8 +86,9 @@ function placeInTable(y, x) {
 		onePiece.classList.add('p2'); //player2 will be blue
 	}
 
-	const foundTD = allTds.filter((td) => td.getAttribute('id').includes(location))[0]; //to access content inside
-	if (foundTD.childElementCount === 0) {
+	const foundTD = allTds.find((td) => td.getAttribute('id').includes(location));
+
+	if (foundTD !== undefined && foundTD.childElementCount === 0) {
 		foundTD.append(onePiece);
 	}
 }
