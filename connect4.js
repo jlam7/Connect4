@@ -73,23 +73,14 @@ function findSpotForCol(x) {
 let keyframeObj = {};
 function placeInTable(y, x) {
 	// TODO: make a div and insert into correct table cell
-	const allTds = [ ...document.querySelectorAll('#column-top ~tr td') ];
-	const location = `${y}-${x}`;
 	let keyFrameNum = keyframeObj[x];
 
 	const onePiece = document.createElement('div');
 	onePiece.classList.add('piece', `slide${keyFrameNum}`); //use keyFrameNum to determine start position of where to drop in piece
+	onePiece.classList.add(`p${currPlayer}`);
 
-	if (currPlayer === 1) {
-		onePiece.classList.add('p1'); //player1 will be red
-	} else {
-		onePiece.classList.add('p2'); //player2 will be blue
-	}
-	const foundTD = allTds.find((td) => td.getAttribute('id').includes(location));
-
-	if (foundTD !== undefined && foundTD.childElementCount === 0) {
-		foundTD.append(onePiece);
-	}
+	const foundTD = document.getElementById(`${y}-${x}`);
+	foundTD.append(onePiece);
 }
 
 /** endGame: announce game end */
@@ -121,11 +112,10 @@ function handleClick(evt) {
 	// place piece in board and add to HTML table
 	// TODO: add line to update in-memory board
 	placeInTable(y, x);
-	board[y][x] = Number(`${currPlayer}`);
+	board[y][x] = currPlayer;
 
 	// check for a win or a tie
-	const allTds = [ ...document.querySelectorAll('#column-top ~tr td') ];
-	const foundTD = allTds.find((td) => td.getAttribute('id').includes(`${y}-${x}`));
+	const foundTD = document.getElementById(`${y}-${x}`);
 	if (checkForWin()) {
 		const top = document.querySelector('#column-top');
 		top.removeEventListener('click', handleClick, false);
@@ -133,7 +123,7 @@ function handleClick(evt) {
 		foundTD.firstChild.addEventListener('animationend', function() {
 			return endGame(`Player ${currPlayer} won!`);
 		});
-	} else if (board.every((row) => row.every((cell) => cell === 1 || cell === 2))) {
+	} else if (board.every((row) => row.every((cell) => cell))) {
 		foundTD.firstChild.addEventListener('animationend', function() {
 			return endGame(`It is a tie!`);
 		});
