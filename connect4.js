@@ -76,8 +76,8 @@ function placeInTable(y, x) {
 	let keyFrameNum = keyframeObj[x];
 
 	const onePiece = document.createElement('div');
-	onePiece.classList.add('piece', `slide${keyFrameNum}`); //use keyFrameNum to determine start position of where to drop in piece
-	onePiece.classList.add(`p${currPlayer}`);
+	onePiece.classList.add('piece', `p${currPlayer}`, `slide${keyFrameNum}`);
+	//use keyFrameNum to determine start position (in y axis) of where to drop in piece
 
 	const foundTD = document.getElementById(`${y}-${x}`);
 	foundTD.append(onePiece);
