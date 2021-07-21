@@ -4,17 +4,41 @@
  * column until a player gets four-in-a-row (horiz, vert, or diag) or until
  * board fills (tie)
  */
-
-const WIDTH = 7;
-const HEIGHT = 6;
+const WIDTH = 9;
+const HEIGHT = 8;
 
 let currPlayer = 1; // active player: 1 or 2
 let board = []; // array of rows, each row is array of cells  (board[y][x])
 
+// Javascript code to add keyframes
+// https://www.geeksforgeeks.org/how-to-dynamically-create-keyframe-css-animations/
+let animationHeight;
+let styleSheet = null;
+dynamicAnimation = (name, animationHeight) => {
+	// Creating a style element
+	// To add the keyframes
+	if (!styleSheet) {
+		styleSheet = document.createElement('style');
+		styleSheet.type = 'text/css';
+		document.head.appendChild(styleSheet);
+	}
+	// Adding The Keyframes
+	styleSheet.sheet.insertRule(
+		`@keyframes ${name} {
+		from {
+			top : ${animationHeight}px;
+		}
+		to {
+			top: 0px;
+		}
+	}`,
+		styleSheet.length
+	);
+};
+
 /** makeBoard: create in-JS board structure:
  *    board = array of rows, each row is array of cells  (board[y][x])
  */
-
 function makeBoard() {
 	// TODO: set "board" to empty HEIGHT x WIDTH matrix array
 	for (let i = 0; i < HEIGHT; i++) {
@@ -69,15 +93,23 @@ function findSpotForCol(x) {
 }
 
 /** placeInTable: update DOM to place piece into HTML table of board */
-
 let keyframeObj = {};
 function placeInTable(y, x) {
 	// TODO: make a div and insert into correct table cell
-	let keyFrameNum = keyframeObj[x];
+
+	// from the x position, the num of clicks will give you the rowNum
+	let rowNum = keyframeObj[x];
+	// not including the lowest row because animationHeight already starts at the highest row with the dashed line
+	let totalPixel = (rowNum - 1) * 50;
+	// animationHeight starts off as a negative number, so will add totalPixel for new starting position
+	animationHeight = (HEIGHT + 1) * -50 + totalPixel;
 
 	const onePiece = document.createElement('div');
-	onePiece.classList.add('piece', `p${currPlayer}`, `slide${keyFrameNum}`);
-	//use keyFrameNum to determine start position (in y axis) of where to drop in piece
+	onePiece.classList.add('piece', `p${currPlayer}`);
+
+	// will make a number of different slide (which should be the same count as the game HEIGHT)
+	dynamicAnimation(`slide${rowNum}`, animationHeight);
+	onePiece.style.animation = `slide${rowNum} 1s forwards`;
 
 	const foundTD = document.getElementById(`${y}-${x}`);
 	foundTD.append(onePiece);
